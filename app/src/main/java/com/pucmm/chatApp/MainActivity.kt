@@ -1,15 +1,14 @@
 package com.pucmm.chatApp
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.core.view.WindowCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.gms.tasks.Tasks
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Source
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,21 +22,26 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        verifyFirebaseConnection()
+        testFirebaseConnection()
     }
 
-    private fun verifyFirebaseConnection() {
+    private fun testFirebaseConnection() {
         val firestore = FirebaseFirestore.getInstance()
-        val task = firestore.collection("app_health")
-            .document("startup_ping")
-            .get(Source.SERVER)
+        val payload = hashMapOf(
+            "status" to "startup_ping",
+            "device" to Build.MODEL,
+            "packageName" to packageName,
+            "timestamp" to FieldValue.serverTimestamp()
+        )
 
-        Tasks.withTimeout(task, 10, TimeUnit.SECONDS)
+        firestore.collection("app_health")
+            .document("startup_ping")
+            .set(payload)
             .addOnSuccessListener {
-                Log.i("FirebaseCheck", "Conexión OK. exists=${it.exists()}")
+                Log.i("FirebaseCheck", "Documento creado correctamente en app_health/startup_ping")
             }
-            .addOnFailureListener {
-                Log.e("FirebaseCheck", "No se pudo conectar a Firebase", it)
+            .addOnFailureListener { e ->
+                Log.e("FirebaseCheck", "No se pudo crear el documento en Firebase", e)
             }
     }
 }
