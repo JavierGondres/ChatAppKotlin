@@ -1,0 +1,41 @@
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log Files
+*.log
+
+# Android Studio captures
+captures/
+
+# IntelliJ
+*.iml
+.idea/
+!.idea/codeStyles/
+!.idea/copyright/
+!.idea/inspectionProfiles/
+!.idea/iconloader.xml
+
+# Keystore files
+*.jks
+*.keystore
+*.p12
+
+# External native build folder
+.externalNativeBuild
+.cxx/
+
+# Google Services file (Remove the '#' if you want to keep your Firebase keys private)
+google-services.json
+
+# Lint
+lint/
+
+# OS X
+.DS_Store
+
+# Patch files
+*.patch
