@@ -25,6 +25,11 @@
             </intent-filter>
         </activity>
 
+        <activity android:name="com.pucmm.chatApp.ui.auth.login.LoginActivity"/>
+        <activity android:name="com.pucmm.chatApp.ui.auth.register.RegisterActivity"/>
+        <activity android:name="com.pucmm.chatApp.ui.chat.ChatActivity"/>
+        <activity android:name="com.pucmm.chatApp.ui.conversations.ConversationsActivity"/>
+
         <service
             android:name=".data.remote.FirebaseMessagingService"
             android:exported="false">

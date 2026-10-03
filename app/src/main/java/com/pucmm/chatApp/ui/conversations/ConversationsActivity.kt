@@ -2,8 +2,12 @@ package com.pucmm.chatApp.ui.conversations
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.pucmm.chatApp.R
 import com.pucmm.chatApp.di.AppModule
+import android.content.Intent
+import com.pucmm.chatApp.ui.chat.ChatActivity
 
 class ConversationsActivity : AppCompatActivity() {
     private val viewModel: ConversationsViewModel by lazy {
@@ -13,5 +17,33 @@ class ConversationsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_conversations)
+
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerConversations)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        val conversations = viewModel.getConversations()
+        val onClick: (ConversationUiModel) -> Unit = { selectedConversation -> // aqui creo el callback
+
+            val intent = Intent(
+                this,
+                ChatActivity::class.java
+            )
+
+            intent.putExtra(
+                "conversationId",
+                selectedConversation.conversationId
+            )
+
+            intent.putExtra(
+                "otherUserName",
+                selectedConversation.otherUserName
+            )
+
+            startActivity(intent)
+        }
+        // se lo paso al adapter
+        val adapter = ConversationAdapter(conversations, onClick)
+        recyclerView.adapter = adapter
+
     }
+
 }

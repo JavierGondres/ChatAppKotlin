@@ -1,5 +1,6 @@
 package com.pucmm.chatApp
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.pucmm.chatApp.ui.auth.login.LoginActivity
+import com.pucmm.chatApp.ui.conversations.ConversationsActivity
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +26,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         testFirebaseConnection()
+
+        startActivity(
+            Intent(this, ConversationsActivity::class.java)
+        )
+
+        finish()
     }
 
     private fun testFirebaseConnection() {
