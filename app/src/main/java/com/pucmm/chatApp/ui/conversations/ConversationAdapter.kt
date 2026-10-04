@@ -13,13 +13,14 @@ class ConversationAdapter (
     private val conversations: List<ConversationUiModel>,
     private val onConversationClick: (ConversationUiModel) -> Unit) // Unit es como un void
     : RecyclerView.Adapter<ConversationAdapter.ConversationViewHolder>(){
-
+    // cuando recycler view necesita una lista, acude a onCreateViewHolder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ConversationViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_conversation, parent, false)
         return ConversationViewHolder(view)
     }
 
+    // coloca datos
     override fun onBindViewHolder(holder: ConversationViewHolder, position: Int) {
         val conversation = conversations[position]
         holder.userName.text = conversation.otherUserName

@@ -7,7 +7,8 @@ class ChatViewModel(
     private val chatRepository: ChatRepository
 ) {
 
-    private val messageList: List<Message> = listOf(
+    // se puso mutable para probar el envio de mensajes.
+    private val messageList: MutableList<Message> = mutableListOf(
         Message(
             id = "message-1",
             senderId = "current-user",
@@ -30,10 +31,20 @@ class ChatViewModel(
 
     fun observeMessages(conversationId: String): List<Message> {
         //return chatRepository.observeMessages(conversationId)
-        return messageList //momentaneamente.
+        return messageList.toList() //momentaneamente.
     }
 
-    suspend fun sendMessage(message: Message): Result<Unit> {
-        return chatRepository.sendMessage(message)
+    fun sendMessage(conversationId: String, text: String): List<Message> {
+        // Se hace manual para probar. Cambiar logica para aplicar Firebase
+        // TODO: Cambiar logica para conectar con Firebase
+        val message = Message(
+            id = "$conversationId-${System.currentTimeMillis()}",
+            senderId = "current-user",
+            receiverId = "other-user",
+            text = text
+        )
+
+        messageList.add(message)
+        return messageList.toList()
     }
 }

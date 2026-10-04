@@ -1,6 +1,5 @@
 package com.pucmm.chatApp.ui.chat
 
-import android.text.LoginFilter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +12,7 @@ import java.util.Date
 import java.util.Locale
 
 class ChatAdapter(
-    private val messages: List<Message>,
+    private var messages: List<Message>,
     private val currentUserId: String,
     private val otherUserName: String
 ) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
@@ -56,6 +55,11 @@ class ChatAdapter(
 
     override fun getItemCount(): Int {
         return messages.size
+    }
+
+    fun updateMessages(newMessages: List<Message>) {
+        messages = newMessages
+        notifyDataSetChanged()
     }
 
     class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
