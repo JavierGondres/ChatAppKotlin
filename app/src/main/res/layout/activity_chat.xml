@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chatRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/colorSurface"
@@ -20,12 +21,12 @@
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonBack"
             style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="48dp"
+            android:layout_width="56dp"
             android:layout_height="48dp"
             android:contentDescription="Volver"
             android:minWidth="0dp"
             android:padding="0dp"
-            android:text="‹"
+            android:text="←"
             android:textSize="32sp" />
 
         <com.google.android.material.card.MaterialCardView

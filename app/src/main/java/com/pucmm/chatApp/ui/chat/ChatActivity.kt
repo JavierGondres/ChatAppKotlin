@@ -3,7 +3,9 @@ package com.pucmm.chatApp.ui.chat
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +19,25 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_chat)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.chatRoot)) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+            insets
+        }
+
+        val buttonBack = findViewById<Button>(R.id.buttonBack)
+
+        buttonBack.setOnClickListener {
+            finish()
+        }
 
         val conversationId = intent.getStringExtra("conversationId").orEmpty()
         val otherUserName = intent.getStringExtra("otherUserName").orEmpty()
