@@ -24,6 +24,8 @@ class ChatActivity : AppCompatActivity() {
 
         val messages = viewModel.observeMessages(conversationId)
 
+        findViewById<TextView>(R.id.textChatUser).text = otherUserName
+
         val editTextMessage = findViewById<EditText>(R.id.editTextMessage)
         val buttonSend = findViewById<Button>(R.id.buttonSend)
 
@@ -51,6 +53,5 @@ class ChatActivity : AppCompatActivity() {
         }
 
         recyclerView.adapter = adapter
-
     }
 }
