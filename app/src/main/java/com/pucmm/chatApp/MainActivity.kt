@@ -21,27 +21,5 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        testFirebaseConnection()
-    }
-
-    private fun testFirebaseConnection() {
-        val firestore = FirebaseFirestore.getInstance()
-        val payload = hashMapOf(
-            "status" to "startup_ping",
-            "device" to Build.MODEL,
-            "packageName" to packageName,
-            "timestamp" to FieldValue.serverTimestamp()
-        )
-
-        firestore.collection("app_health")
-            .document("startup_ping")
-            .set(payload)
-            .addOnSuccessListener {
-                Log.i("FirebaseCheck", "Documento creado correctamente en app_health/startup_ping")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FirebaseCheck", "No se pudo crear el documento en Firebase", e)
-            }
     }
 }
