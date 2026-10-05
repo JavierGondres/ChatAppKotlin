@@ -39,3 +39,5 @@ lint/
 
 # Patch files
 *.patch
+
+docs

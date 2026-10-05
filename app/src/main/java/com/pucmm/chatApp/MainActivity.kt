@@ -1,14 +1,10 @@
 package com.pucmm.chatApp
 
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.core.view.WindowCompat
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 class MainActivity : AppCompatActivity() {
@@ -21,27 +17,5 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        testFirebaseConnection()
-    }
-
-    private fun testFirebaseConnection() {
-        val firestore = FirebaseFirestore.getInstance()
-        val payload = hashMapOf(
-            "status" to "startup_ping",
-            "device" to Build.MODEL,
-            "packageName" to packageName,
-            "timestamp" to FieldValue.serverTimestamp()
-        )
-
-        firestore.collection("app_health")
-            .document("startup_ping")
-            .set(payload)
-            .addOnSuccessListener {
-                Log.i("FirebaseCheck", "Documento creado correctamente en app_health/startup_ping")
-            }
-            .addOnFailureListener { e ->
-                Log.e("FirebaseCheck", "No se pudo crear el documento en Firebase", e)
-            }
     }
 }
