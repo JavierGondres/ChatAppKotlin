@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingTop="12dp"
+    android:paddingBottom="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp"
+        android:text="Nuevo chat"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="360dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerUsers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/item_user" />
+
+        <ProgressBar
+            android:id="@+id/progressUsers"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textEmptyUsers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="No hay más usuarios disponibles para crear un chat."
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="15sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
+</LinearLayout>
