@@ -3,8 +3,10 @@ package com.pucmm.chatApp.ui.chat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.pucmm.chatApp.R
 import com.pucmm.chatApp.data.model.Message
 import java.text.SimpleDateFormat
@@ -35,12 +37,21 @@ class ChatAdapter(
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
         val message = messages[position]
         holder.messageText.text = message.text
+        holder.messageText.visibility = if (message.text.isBlank()) View.GONE else View.VISIBLE
         holder.messageTextTime.text = timeFormatter.format(Date(message.sentAt))
         val senderName = message.senderName.ifBlank {
             if (message.senderId == currentUserId) "" else otherUserName
         }
         holder.messageSenderName?.text = senderName
         holder.messageSenderName?.visibility = if (senderName.isBlank()) View.GONE else View.VISIBLE
+        val imageUrl = message.imageUrl
+        if (imageUrl.isNullOrBlank()) {
+            holder.messageImage?.visibility = View.GONE
+            holder.messageImage?.setImageDrawable(null)
+        } else {
+            holder.messageImage?.visibility = View.VISIBLE
+            holder.messageImage?.load(imageUrl)
+        }
     }
 
     companion object {
@@ -70,5 +81,6 @@ class ChatAdapter(
         val messageText: TextView = itemView.findViewById(R.id.textMessage)
         val messageTextTime: TextView = itemView.findViewById(R.id.textMessageTime)
         val messageSenderName: TextView? = itemView.findViewById(R.id.textSenderName)
+        val messageImage: ImageView? = itemView.findViewById(R.id.imageMessage)
     }
 }
