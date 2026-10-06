@@ -1,6 +1,26 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
+}
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+fun requireLocalProperty(name: String): String {
+    val value = localProperties.getProperty(name)
+        ?.trim()
+        ?.removeSurrounding("\"")
+        .orEmpty()
+    if (value.isBlank()) {
+        error("Falta $name en local.properties")
+    }
+    return value
 }
 
 
@@ -18,6 +38,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField(
+            "String",
+            "FIREBASE_STORAGE_BUCKET",
+            "\"${requireLocalProperty("FIREBASE_STORAGE_BUCKET")}\""
+        )
     }
 
     buildTypes {
@@ -57,4 +83,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("com.google.firebase:firebase-messaging")
+    implementation("io.coil-kt:coil:2.7.0")
 }
