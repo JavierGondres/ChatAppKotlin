@@ -4,6 +4,7 @@ package com.pucmm.chatApp.ui.conversations
 // Se necesita para mostrar todos los valores del XML.
 data class ConversationUiModel (
     val conversationId: String = "",
+    val otherUserId: String = "",
     val otherUserName: String = "",
     val lastMessage: String = "",
     val time: String = "",
