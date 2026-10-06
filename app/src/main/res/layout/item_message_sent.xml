@@ -25,14 +25,25 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="14dp"
-            android:paddingTop="10dp"
+            android:paddingTop="9dp"
             android:paddingEnd="12dp"
             android:paddingBottom="7dp">
+
+            <TextView
+                android:id="@+id/textSenderName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxWidth="280dp"
+                android:textColor="?attr/colorOnPrimaryContainer"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="Renso" />
 
             <TextView
                 android:id="@+id/textMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
                 android:maxWidth="280dp"
                 android:text="Mensaje"
                 android:textColor="?attr/colorOnPrimaryContainer"

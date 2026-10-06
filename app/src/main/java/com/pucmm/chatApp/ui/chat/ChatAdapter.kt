@@ -18,7 +18,7 @@ class ChatAdapter(
 ) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
 
     private val timeFormatter =
-        SimpleDateFormat("h:mm a", Locale.getDefault())
+        SimpleDateFormat("dd/MM/yyyy h:mm a", Locale.getDefault())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
         val layoutId = if (viewType == VIEW_TYPE_SENT) {
@@ -36,7 +36,11 @@ class ChatAdapter(
         val message = messages[position]
         holder.messageText.text = message.text
         holder.messageTextTime.text = timeFormatter.format(Date(message.sentAt))
-        holder.messageSenderName?.text = otherUserName
+        val senderName = message.senderName.ifBlank {
+            if (message.senderId == currentUserId) "" else otherUserName
+        }
+        holder.messageSenderName?.text = senderName
+        holder.messageSenderName?.visibility = if (senderName.isBlank()) View.GONE else View.VISIBLE
     }
 
     companion object {
