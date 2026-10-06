@@ -24,7 +24,8 @@ data class ConversationsUiState(
     val currentUserName: String = "",
     val isLoading: Boolean = true,
     val errorMessage: String? = null,
-    val openedConversation: ConversationUiModel? = null
+    val openedConversation: ConversationUiModel? = null,
+    val signedOut: Boolean = false
 )
 
 class ConversationsViewModel(
@@ -44,6 +45,7 @@ class ConversationsViewModel(
     val uiState: StateFlow<ConversationsUiState> = _uiState.asStateFlow()
 
     private var isCreatingConversation = false
+    private var isSigningOut = false
 
     init {
         if (currentUid.isBlank()) {
@@ -52,6 +54,9 @@ class ConversationsViewModel(
                 errorMessage = "Inicia sesión para ver tus chats"
             )
         } else {
+            viewModelScope.launch {
+                authRepository.syncFcmToken()
+            }
             viewModelScope.launch {
                 combine(
                     chatRepository.observeUsers(),
@@ -121,7 +126,13 @@ class ConversationsViewModel(
     }
 
     fun signOut() {
-        authRepository.signOut()
+        if (isSigningOut || _uiState.value.signedOut) return
+        isSigningOut = true
+        viewModelScope.launch {
+            authRepository.signOut()
+            isSigningOut = false
+            _uiState.value = _uiState.value.copy(signedOut = true)
+        }
     }
 
     private fun List<Conversation>.toUiModels(

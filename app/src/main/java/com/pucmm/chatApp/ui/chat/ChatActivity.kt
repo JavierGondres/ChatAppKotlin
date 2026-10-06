@@ -23,6 +23,7 @@ import coil.load
 import com.google.android.material.button.MaterialButton
 import com.pucmm.chatApp.R
 import com.pucmm.chatApp.data.model.Message
+import com.pucmm.chatApp.data.util.ActiveChat
 import com.pucmm.chatApp.di.AppModule
 import kotlinx.coroutines.launch
 
@@ -141,6 +142,18 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        ActiveChat.conversationId = intent.getStringExtra(EXTRA_CONVERSATION_ID)
+    }
+
+    override fun onStop() {
+        if (ActiveChat.conversationId == intent.getStringExtra(EXTRA_CONVERSATION_ID)) {
+            ActiveChat.conversationId = null
+        }
+        super.onStop()
     }
 
     companion object {

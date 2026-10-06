@@ -14,11 +14,20 @@ class AuthRepository(
         return firebaseAuthDataSource.signUp(email, password, displayName)
     }
 
-    fun signOut() {
+    suspend fun signOut() {
+        firebaseAuthDataSource.clearFcmToken()
         firebaseAuthDataSource.signOut()
     }
 
     fun getCurrentUser(): User? {
         return firebaseAuthDataSource.getCurrentUser()
+    }
+
+    suspend fun syncFcmToken(): Result<Unit> {
+        return firebaseAuthDataSource.syncFcmToken()
+    }
+
+    suspend fun saveFcmToken(token: String): Result<Unit> {
+        return firebaseAuthDataSource.saveFcmToken(token)
     }
 }

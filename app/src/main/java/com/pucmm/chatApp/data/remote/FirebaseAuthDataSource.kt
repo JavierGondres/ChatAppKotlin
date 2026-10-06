@@ -4,7 +4,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.pucmm.chatApp.data.model.User
 import com.pucmm.chatApp.data.util.Constants
 import kotlinx.coroutines.tasks.await
@@ -58,12 +60,54 @@ class FirebaseAuthDataSource(
         }
     }
 
+    suspend fun clearFcmToken() {
+        val uid = firebaseAuth.currentUser?.uid
+        if (!uid.isNullOrBlank()) {
+            runCatching {
+                firestore.collection(Constants.USERS_COLLECTION)
+                    .document(uid)
+                    .update("fcmToken", FieldValue.delete())
+                    .await()
+            }
+        }
+        runCatching {
+            FirebaseMessaging.getInstance().deleteToken().await()
+        }
+    }
+
     fun signOut() {
         firebaseAuth.signOut()
     }
 
     fun getCurrentUser(): User? {
         return firebaseAuth.currentUser?.toAppUser()
+    }
+
+    suspend fun syncFcmToken(): Result<Unit> {
+        val user = firebaseAuth.currentUser
+            ?: return Result.failure(Exception("Sin sesión"))
+        return runCatching {
+            val token = com.google.firebase.messaging.FirebaseMessaging.getInstance().token.await()
+            saveFcmToken(user.uid, token)
+        }
+    }
+
+    suspend fun saveFcmToken(token: String): Result<Unit> {
+        val uid = firebaseAuth.currentUser?.uid
+            ?: return Result.failure(Exception("Sin sesión"))
+        if (token.isBlank()) {
+            return Result.failure(Exception("Token vacío"))
+        }
+        return runCatching {
+            saveFcmToken(uid, token)
+        }
+    }
+
+    private suspend fun saveFcmToken(uid: String, token: String) {
+        firestore.collection(Constants.USERS_COLLECTION)
+            .document(uid)
+            .update("fcmToken", token)
+            .await()
     }
 
     private fun FirebaseUser.toAppUser(name: String = displayName.orEmpty()): User {

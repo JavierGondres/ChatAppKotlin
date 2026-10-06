@@ -40,4 +40,6 @@ lint/
 # Patch files
 *.patch
 
+node_modules/
+
 docs
