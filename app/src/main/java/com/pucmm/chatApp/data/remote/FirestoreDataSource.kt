@@ -103,7 +103,8 @@ class FirestoreDataSource(
 
     suspend fun sendMessage(conversationId: String, message: Message): Result<Unit> {
         val text = message.text.trim()
-        if (conversationId.isBlank() || text.isEmpty()) {
+        val imageUrl = message.imageUrl?.takeIf { url -> url.isNotBlank() }
+        if (conversationId.isBlank() || (text.isEmpty() && imageUrl == null)) {
             return Result.failure(Exception("El mensaje no puede estar vacío"))
         }
 
@@ -112,22 +113,23 @@ class FirestoreDataSource(
             val conversationRef = firestore.collection(Constants.CONVERSATIONS_COLLECTION)
                 .document(conversationId)
             val messageRef = conversationRef.collection(Constants.MESSAGES_COLLECTION).document()
+            val payload = mutableMapOf<String, Any>(
+                "senderId" to message.senderId,
+                "senderName" to message.senderName,
+                "receiverId" to message.receiverId,
+                "text" to text,
+                "sentAt" to sentAt,
+                "isRead" to false
+            )
+            if (imageUrl != null) {
+                payload["imageUrl"] = imageUrl
+            }
             firestore.runBatch { batch ->
-                batch.set(
-                    messageRef,
-                    mapOf(
-                        "senderId" to message.senderId,
-                        "senderName" to message.senderName,
-                        "receiverId" to message.receiverId,
-                        "text" to text,
-                        "sentAt" to sentAt,
-                        "isRead" to false
-                    )
-                )
+                batch.set(messageRef, payload)
                 batch.update(
                     conversationRef,
                     mapOf(
-                        "lastMessage" to text,
+                        "lastMessage" to text.ifBlank { "Imagen" },
                         "updatedAt" to sentAt
                     )
                 )
