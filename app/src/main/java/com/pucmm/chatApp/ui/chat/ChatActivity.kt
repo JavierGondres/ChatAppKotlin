@@ -1,10 +1,14 @@
 package com.pucmm.chatApp.ui.chat
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +19,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
+import com.google.android.material.button.MaterialButton
 import com.pucmm.chatApp.R
 import com.pucmm.chatApp.data.model.Message
 import com.pucmm.chatApp.di.AppModule
@@ -25,10 +31,15 @@ class ChatActivity : AppCompatActivity() {
         intent.getStringExtra(EXTRA_OTHER_USER_NAME).orEmpty()
     }
 
+    private val pickImage = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) viewModel.setPendingImage(uri)
+    }
+
     private val viewModel: ChatViewModel by viewModels {
         ChatViewModel.factory(
             AppModule.chatRepository,
             AppModule.authRepository,
+            AppModule.storageRepository,
             intent.getStringExtra(EXTRA_CONVERSATION_ID).orEmpty(),
             intent.getStringExtra(EXTRA_OTHER_USER_ID).orEmpty()
         )
@@ -56,22 +67,32 @@ class ChatActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.textChatAvatar).text = otherUserName.initials()
 
         val editTextMessage = findViewById<EditText>(R.id.editTextMessage)
+        val buttonSend = findViewById<MaterialButton>(R.id.buttonSend)
+        val buttonAttach = findViewById<View>(R.id.buttonAttach)
+        val previewLayout = findViewById<View>(R.id.layoutImagePreview)
+        val imagePreview = findViewById<ImageView>(R.id.imagePreview)
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerMessages)
         recyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = ChatAdapter(emptyList(), viewModel.currentUserId, otherUserName)
         recyclerView.adapter = adapter
 
-        findViewById<View>(R.id.buttonSend).setOnClickListener {
-            val text = editTextMessage.text.toString()
-            if (text.isBlank()) return@setOnClickListener
-            if (viewModel.sendMessage(text)) {
-                editTextMessage.text.clear()
-            }
+        buttonAttach.setOnClickListener {
+            pickImage.launch(
+                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+            )
+        }
+        findViewById<View>(R.id.buttonRemoveImage).setOnClickListener {
+            viewModel.clearPendingImage()
+        }
+        buttonSend.setOnClickListener {
+            viewModel.sendMessage(editTextMessage.text.toString())
         }
 
         val progress = findViewById<View>(R.id.progressMessages)
         val emptyChat = findViewById<View>(R.id.textEmptyChat)
         var shownMessages: List<Message> = emptyList()
+        var shownPreview: Uri? = null
+        var wasSending = false
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -90,6 +111,28 @@ class ChatActivity : AppCompatActivity() {
                         }
                         shownMessages = state.messages
                     }
+
+                    if (state.pendingImageUri != shownPreview) {
+                        shownPreview = state.pendingImageUri
+                        if (state.pendingImageUri == null) {
+                            previewLayout.visibility = View.GONE
+                            imagePreview.setImageDrawable(null)
+                        } else {
+                            previewLayout.visibility = View.VISIBLE
+                            imagePreview.load(state.pendingImageUri)
+                        }
+                    }
+
+                    val finishedSending = wasSending && !state.isSending &&
+                        state.errorMessage == null &&
+                        state.pendingImageUri == null
+                    wasSending = state.isSending
+                    if (finishedSending) {
+                        editTextMessage.text.clear()
+                    }
+                    buttonSend.isEnabled = !state.isSending
+                    buttonAttach.isEnabled = !state.isSending
+                    buttonSend.text = if (state.isSending) "Enviando..." else "Enviar"
 
                     state.errorMessage?.let { message ->
                         Toast.makeText(this@ChatActivity, message, Toast.LENGTH_SHORT).show()
