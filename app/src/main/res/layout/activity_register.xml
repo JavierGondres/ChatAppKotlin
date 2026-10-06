@@ -25,7 +25,8 @@
             android:layout_width="68dp"
             android:layout_height="68dp"
             android:contentDescription="Logo de ChatApp"
-            android:src="@mipmap/ic_launcher" />
+            android:scaleType="centerInside"
+            android:src="@drawable/chatapp_logo_icon" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -119,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:gravity="center"
-            android:textColor="#B00020"
+            android:textColor="@color/chatapp_error"
             android:visibility="gone" />
 
         <ProgressBar

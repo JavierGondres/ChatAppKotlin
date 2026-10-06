@@ -1,8 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.ChatApp" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/chatapp_primary</item>
+        <item name="colorOnPrimary">@color/chatapp_on_primary</item>
+        <item name="colorPrimaryContainer">@color/chatapp_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/chatapp_on_primary_container</item>
+        <item name="colorSecondary">@color/chatapp_secondary</item>
+        <item name="colorOnSecondary">@color/chatapp_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/chatapp_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/chatapp_on_secondary_container</item>
+        <item name="colorSurface">@color/chatapp_surface</item>
+        <item name="colorSurfaceVariant">@color/chatapp_surface_variant</item>
+        <item name="colorOnSurface">@color/chatapp_on_surface</item>
+        <item name="colorOnSurfaceVariant">@color/chatapp_on_surface_variant</item>
+        <item name="colorOutline">@color/chatapp_outline</item>
+        <item name="colorOutlineVariant">@color/chatapp_outline_variant</item>
+        <item name="colorError">@color/chatapp_error</item>
+        <item name="colorOnError">@color/chatapp_on_error</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:statusBarColor">@color/chatapp_surface</item>
+        <item name="android:navigationBarColor">@color/chatapp_surface</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
     </style>
 
     <style name="Theme.ChatApp" parent="Base.Theme.ChatApp" />
