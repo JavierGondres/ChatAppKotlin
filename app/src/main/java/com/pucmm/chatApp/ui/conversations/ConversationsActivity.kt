@@ -1,13 +1,18 @@
 package com.pucmm.chatApp.ui.conversations
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,17 +34,23 @@ class ConversationsActivity : AppCompatActivity() {
         ConversationsViewModel.factory(AppModule.chatRepository, AppModule.authRepository)
     }
 
+    private val requestNotificationPermission = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { }
+
     private lateinit var conversationAdapter: ConversationAdapter
     private var shownConversations: List<ConversationUiModel> = emptyList()
     private var newChatDialog: BottomSheetDialog? = null
     private var userAdapter: UserAdapter? = null
     private var emptyUsersView: TextView? = null
     private var progressUsersView: ProgressBar? = null
+    private var hasLoggedOut = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(R.layout.activity_conversations)
+        requestNotificationPermissionIfNeeded()
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.conversationsRoot)) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -54,10 +65,6 @@ class ConversationsActivity : AppCompatActivity() {
 
         findViewById<View>(R.id.buttonLogout).setOnClickListener {
             viewModel.signOut()
-            startActivity(Intent(this, LoginActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
-            finish()
         }
 
         findViewById<View>(R.id.buttonCreateChat).setOnClickListener {
@@ -78,7 +85,22 @@ class ConversationsActivity : AppCompatActivity() {
         }
     }
 
+    private fun requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val granted = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!granted) {
+            requestNotificationPermission.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
     private fun render(state: ConversationsUiState) {
+        if (state.signedOut) {
+            openLogin()
+            return
+        }
         findViewById<TextView>(R.id.textCurrentUser).text = if (state.currentUserName.isBlank()) {
             "Sesión iniciada"
         } else {
@@ -110,6 +132,15 @@ class ConversationsActivity : AppCompatActivity() {
             newChatDialog?.dismiss()
             openChat(conversation)
         }
+    }
+
+    private fun openLogin() {
+        if (hasLoggedOut) return
+        hasLoggedOut = true
+        startActivity(Intent(this, LoginActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+        finish()
     }
 
     private fun showNewChatDialog() {
