@@ -2,4 +2,21 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="chatapp_primary">#218EDB</color>
+    <color name="chatapp_on_primary">#FFFFFFFF</color>
+    <color name="chatapp_primary_container">#D8EDFF</color>
+    <color name="chatapp_on_primary_container">#003354</color>
+    <color name="chatapp_secondary">#5D91A8</color>
+    <color name="chatapp_on_secondary">#FFFFFFFF</color>
+    <color name="chatapp_secondary_container">#D9EEF7</color>
+    <color name="chatapp_on_secondary_container">#123746</color>
+    <color name="chatapp_surface">#FFFFFFFF</color>
+    <color name="chatapp_surface_variant">#F1F5F9</color>
+    <color name="chatapp_on_surface">#1B1B1F</color>
+    <color name="chatapp_on_surface_variant">#6F747A</color>
+    <color name="chatapp_outline">#B9C1C8</color>
+    <color name="chatapp_outline_variant">#E1E5E9</color>
+    <color name="chatapp_error">#BA1A1A</color>
+    <color name="chatapp_on_error">#FFFFFFFF</color>
 </resources>
